@@ -1,10 +1,10 @@
 <?php include __DIR__.'/../partials/sidebar.php'; ?>
 
 <div class="p-8 max-w-7xl mx-auto">
-    <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+    <div class="flex justify-between items-center mb-8">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Verifikasi Dokumen</h1>
-            <p class="text-slate-500 mt-1">Pemeriksaan kelengkapan administrasi usulan kegiatan.</p>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Verifikasi Telaah</h1>
+            <p class="text-slate-500 mt-1">Pemeriksaan kelengkapan administrasi telaah kegiatan.</p>
         </div>
         <div class="flex items-center gap-2">
             <span class="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-sm font-bold border border-emerald-100 shadow-sm">
@@ -20,15 +20,16 @@
                 <span class="material-icons text-slate-300 text-5xl">fact_check</span>
             </div>
             <h3 class="text-xl font-bold text-slate-800 mb-2">Semua Bersih!</h3>
-            <p class="text-slate-500">Tidak ada dokumen yang perlu diverifikasi saat ini.</p>
+            <p class="text-slate-500">Tidak ada telaah yang perlu diverifikasi saat ini.</p>
         </div>
     <?php else: ?>
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <table class="w-full text-sm text-left">
                 <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-xs border-b border-slate-200">
                     <tr>
-                        <th class="px-6 py-4 tracking-wider">Detail Usulan</th>
+                        <th class="px-6 py-4 tracking-wider">Detail Telaah</th>
                         <th class="px-6 py-4 tracking-wider">Pengusul</th>
+                        <th class="px-6 py-4 tracking-wider">Estimasi Anggaran</th>
                         <th class="px-6 py-4 tracking-wider">Tanggal Masuk</th>
                         <th class="px-6 py-4 tracking-wider text-right">Tindakan</th>
                     </tr>
@@ -52,6 +53,11 @@
                                     <?php echo strtoupper(substr($row['username'], 0, 1)); ?>
                                 </div>
                                 <span class="text-slate-700 font-medium"><?php echo htmlspecialchars($row['username']); ?></span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-emerald-600">
+                                Rp <?php echo number_format($row['total_anggaran'] ?? 0, 0, ',', '.'); ?>
                             </div>
                         </td>
                         <td class="px-6 py-4 text-slate-500">

@@ -28,7 +28,7 @@ class VerifikasiController
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->bindValue(':perPage', (int)$perPage, PDO::PARAM_INT);
         $stmt->execute();
-        $telaah = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $usulan = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $total = $this->db->query("SELECT COUNT(*) FROM telaah_kegiatan WHERE status_telaah = 'Diajukan'")->fetchColumn();
 
@@ -109,6 +109,9 @@ class VerifikasiController
 
         $judul = "Telaah $statusBaru";
         $pesan = "Telaah '{$t['nama_kegiatan']}' telah $statusBaru oleh Verifikator.";
+        if (!empty($catatan)) {
+            $pesan .= " Catatan: $catatan";
+        }
         $link = "/telaah/list";
 
         $this->db->prepare("INSERT INTO notifikasi (user_id, judul, pesan, link) VALUES (?, ?, ?, ?)")

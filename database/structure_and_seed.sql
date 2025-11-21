@@ -54,51 +54,63 @@ INSERT INTO users (username, email, password, role, jurusan_id, is_active) VALUE
 
 -- 5. Tabel Usulan Kegiatan (INTI)
 -- UPDATED: Enum status_terkini sudah mencakup flow approval lengkap
-CREATE TABLE IF NOT EXISTS usulan_kegiatan (
+CREATE TABLE IF NOT EXISTS telaah_kegiatan (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     nama_kegiatan VARCHAR(255) NOT NULL,
     gambaran_umum TEXT,
     penerima_manfaat VARCHAR(255),
+    strategi_pencapaian TEXT,
     metode_pelaksanaan TEXT,
     tahapan_pelaksanaan TEXT,
-    kurun_waktu_pelaksanaan VARCHAR(100),
-    kode_mak VARCHAR(50),
-    nominal_pencairan DECIMAL(18,2),
-    tgl_pencairan DATETIME,
-    tgl_batas_lpj DATETIME,
-    status_terkini ENUM('Draft','Verifikasi','Revisi','Menunggu WD2','Menunggu PPK','Disetujui','Pencairan','LPJ','Selesai','Terlambat','Ditolak') NOT NULL DEFAULT 'Draft',
+    tanggal_mulai DATE,
+    tanggal_selesai DATE,
+    status_telaah ENUM('Draft','Diajukan','Revisi','Disetujui','Ditolak') DEFAULT 'Draft',
+    catatan_verifikator TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- 6. Tabel RAB Detail
-CREATE TABLE IF NOT EXISTS rab_detail (
+-- Tabel Indikator Kinerja
+CREATE TABLE IF NOT EXISTS indikator_kinerja (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usulan_id INT NOT NULL,
+    telaah_id INT NOT NULL,
+    indikator_keberhasilan VARCHAR(255) NOT NULL,
+    bulan_target VARCHAR(50),
+    bobot_persen DECIMAL(5,2),
+    FOREIGN KEY (telaah_id) REFERENCES telaah_kegiatan(id) ON DELETE CASCADE
+);
+
+-- Tabel Telaah IKU
+CREATE TABLE IF NOT EXISTS telaah_iku (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    telaah_id INT NOT NULL,
+    iku_id INT NOT NULL,
+    target_value VARCHAR(100),
+    FOREIGN KEY (telaah_id) REFERENCES telaah_kegiatan(id) ON DELETE CASCADE,
+    FOREIGN KEY (iku_id) REFERENCES master_iku(id)
+);
+
+-- Tabel Telaah RAB
+CREATE TABLE IF NOT EXISTS telaah_rab (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    telaah_id INT NOT NULL,
     kategori_id INT NOT NULL,
     uraian VARCHAR(255) NOT NULL,
     volume INT NOT NULL,
     satuan VARCHAR(50) NOT NULL,
     harga_satuan DECIMAL(18,2) NOT NULL,
     total DECIMAL(18,2) NOT NULL,
-    FOREIGN KEY (usulan_id) REFERENCES usulan_kegiatan(id) ON DELETE CASCADE,
+    FOREIGN KEY (telaah_id) REFERENCES telaah_kegiatan(id) ON DELETE CASCADE,
     FOREIGN KEY (kategori_id) REFERENCES master_kategori_anggaran(id)
-);
-
--- 7. Tabel Penghubung IKU
-CREATE TABLE IF NOT EXISTS tor_iku (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    usulan_id INT NOT NULL,
-    iku_id INT NOT NULL,
-    FOREIGN KEY (usulan_id) REFERENCES usulan_kegiatan(id) ON DELETE CASCADE,
-    FOREIGN KEY (iku_id) REFERENCES master_iku(id)
 );
 
 -- 8. Tabel Dokumen Pendukung
 CREATE TABLE IF NOT EXISTS dokumen_pendukung (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usulan_id INT NOT NULL,
-    jenis_dokumen ENUM('Surat Pengantar','LPJ','Berita Acara','Bukti Transfer') NOT NULL,
+    jenis_dokumen ENUM('LPJ','Berita Acara','Bukti Transfer') NOT NULL,
     file_path VARCHAR(255) NOT NULL,
     versi INT NOT NULL DEFAULT 1,
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
