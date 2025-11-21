@@ -94,13 +94,21 @@ if ($uri === '/' || $uri === '/index.php') {
     $notif->read($id);
 
 // MODUL PENGUSUL
-} elseif ($uri === '/usulan/create') {
-    $wizard = new UsulanWizardController($db);
-    if ($method === 'POST') $wizard->store(); else $wizard->create();
-} elseif ($uri === '/usulan/detail') {
-    $id = (int)$_GET['id'];
-    $usulan = new UsulanController($db);
-    $usulan->detail($id);
+} elseif ($uri === '/telaah/create') {
+    $telaah = new \App\Controllers\TelaahController($db);
+    $telaah->create();
+} elseif ($uri === '/telaah/save-draft' && $method === 'POST') {
+    $telaah = new \App\Controllers\TelaahController($db);
+    $telaah->saveDraft();
+} elseif ($uri === '/telaah/submit' && $method === 'POST') {
+    $telaah = new \App\Controllers\TelaahController($db);
+    $telaah->submit();
+} elseif ($uri === '/telaah/list') {
+    $telaah = new \App\Controllers\TelaahController($db);
+    $telaah->list();
+} elseif ($uri === '/telaah/delete' && $method === 'POST') {
+    $telaah = new \App\Controllers\TelaahController($db);
+    $telaah->delete();
 
 // MODUL VERIFIKASI
 } elseif ($uri === '/verifikasi') {
